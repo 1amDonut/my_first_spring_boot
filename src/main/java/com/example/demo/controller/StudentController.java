@@ -1,5 +1,8 @@
-package com.example.demo;
+package com.example.demo.controller;
 
+import com.example.demo.Student;
+import com.example.demo.StudentRowMapper;
+import com.example.demo.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -19,6 +22,9 @@ import java.util.Map;
 public class StudentController {
 
     @Autowired
+    private StudentService studentService;
+
+    @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 //    @PostMapping("/students") 推薦 方法一
 //    @RequestMapping(value = "/students", method = RequestMethod.POST)
@@ -26,10 +32,10 @@ public class StudentController {
 //        return "執行資料庫的Create操作";
 //    }
 
-    @GetMapping("/students/{studentId}")
-    public String Read(@PathVariable @NotNull Integer studentId){
-        return "執行資料庫Read操作";
-    }
+//    @GetMapping("/students/{studentId}")
+//    public String Read(@PathVariable @NotNull Integer studentId){
+//        return "執行資料庫Read操作";
+//    }
 
     @PutMapping("/students/{studentId}")
     public String Update(@PathVariable @NotNull Integer studentId,
@@ -73,14 +79,8 @@ public class StudentController {
         return "執行 INSERT SQL";
     }
 
-    @GetMapping("/students")
-    public List<Student> select(){
-        String sql = "SELECT id, name FROM student";
-
-        Map<String, Object> map = new HashMap<>();
-
-        List<Student> list = namedParameterJdbcTemplate.query(sql, map, new StudentRowMapper());
-
-        return list;
+    @GetMapping("/students/{studentId}")
+    public Student select(@PathVariable Integer studentId){
+        return studentService.getById(studentId);
     }
 }
