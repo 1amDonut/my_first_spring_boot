@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.Repository.StudentRepository;
 import com.example.demo.Student;
 import com.example.demo.StudentRowMapper;
 import com.example.demo.service.StudentService;
@@ -22,65 +23,47 @@ import java.util.Map;
 public class StudentController {
 
     @Autowired
-    private StudentService studentService;
-
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-//    @PostMapping("/students") 推薦 方法一
-//    @RequestMapping(value = "/students", method = RequestMethod.POST)
-//    public String Create(@RequestBody @Valid Student student){
-//        return "執行資料庫的Create操作";
-//    }
-
-//    @GetMapping("/students/{studentId}")
-//    public String Read(@PathVariable @NotNull Integer studentId){
-//        return "執行資料庫Read操作";
-//    }
-
-    @PutMapping("/students/{studentId}")
-    public String Update(@PathVariable @NotNull Integer studentId,
-                         @RequestBody Student student){
-        return "更新資料庫update操作";
-    }
-
-    @DeleteMapping("/students/{studentId}")
-    public String Delete(@PathVariable Integer studentId){
-        return "執行資料Delte操作";
-    }
-
-//    批量插入
-    @PostMapping("/students/batch")
-    public String insertList(@RequestBody List<Student> studentList){
-        String sql = "INSERT INTO student (name) VALUE (:studentName)";
-
-        MapSqlParameterSource[] parameterSources = new MapSqlParameterSource[studentList.size()];
-
-        for (int i=0; i<studentList.size(); i++){
-            Student student = studentList.get(i);
-            parameterSources[i] = new MapSqlParameterSource();
-            parameterSources[i].addValue("studentName", student.getName());
-        }
-        namedParameterJdbcTemplate.batchUpdate(sql, parameterSources);
-        return "執行一批 INSERT sql";
-    }
+    private StudentRepository studentRepository;
 
     @PostMapping("/students")
     public String insert(@RequestBody Student student){
-        String sql = "INSERT INTO student( name) VALUES (:studentName);";
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("studentName", student.getName());
+        studentRepository.save(student);
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
+        return "執行資料庫的 Create 操作";
+    }
 
-        int id = keyHolder.getKey().intValue();
+    @PutMapping("/students/{studentId}")
+    public String update(@PathVariable Integer studentId,
+                         @RequestBody Student student){
 
-        return "執行 INSERT SQL";
+        Student s = studentRepository.findById(studentId).orElse(null);
+
+        if (s != null){
+            s.setName(student.getName());
+            studentRepository.save(s);
+
+            return "執行資料庫的Update操作";
+        }else{
+            return "Update 失敗，數據不存在";
+        }
+
+    }
+
+    @DeleteMapping("/students/{studentId")
+    public String delete(@PathVariable Integer studentId){
+
+        studentRepository.deleteById(studentId);
+
+        return "執行資料庫的Delete操作";
     }
 
     @GetMapping("/students/{studentId}")
-    public Student select(@PathVariable Integer studentId){
-        return studentService.getById(studentId);
+    public Student read(@PathVariable Integer studentId){
+
+//      Optional 用法 orElse 如果資料庫找不到這筆資訊，student的值就會是null
+        Student student = studentRepository.findById(studentId).orElse(null);
+
+        return student;
     }
 }

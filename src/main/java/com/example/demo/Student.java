@@ -1,28 +1,20 @@
 package com.example.demo;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Entity
+@Table(name= "student")
 public class Student {
-    @NotNull
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     Integer id;
-    @NotBlank
+
+    @Column(name = "name")
     String name;
-    Double store;
-    boolean graduated;
-    Integer age;
-    List<String> courseList;
-    Pet pet;
-    List<Pet> petList;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Integer getId() {
         return id;
@@ -30,5 +22,13 @@ public class Student {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
