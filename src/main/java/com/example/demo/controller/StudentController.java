@@ -5,6 +5,8 @@ import com.example.demo.Student;
 import com.example.demo.StudentRowMapper;
 import com.example.demo.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -23,47 +25,41 @@ import java.util.Map;
 public class StudentController {
 
     @Autowired
-    private StudentRepository studentRepository;
+    private StudentService studentService;
 
     @PostMapping("/students")
-    public String insert(@RequestBody Student student){
+    public ResponseEntity<Student> insert(@RequestBody Student student){
 
-        studentRepository.save(student);
+        Integer studentId = studentService.insert(student);
 
-        return "執行資料庫的 Create 操作";
+        Student newstudent = studentService.getById(studentId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(newstudent);
     }
 
     @PutMapping("/students/{studentId}")
-    public String update(@PathVariable Integer studentId,
-                         @RequestBody Student student){
+    public ResponseEntity<?> update(@PathVariable Integer studentId,
+                                         @RequestBody Student student){
 
-        Student s = studentRepository.findById(studentId).orElse(null);
+        student.setId(studentId);
+        studentService.update(student);
 
-        if (s != null){
-            s.setName(student.getName());
-            studentRepository.save(s);
-
-            return "執行資料庫的Update操作";
-        }else{
-            return "Update 失敗，數據不存在";
-        }
-
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @DeleteMapping("/students/{studentId")
-    public String delete(@PathVariable Integer studentId){
+    public ResponseEntity<?> delete(@PathVariable Integer studentId){
 
-        studentRepository.deleteById(studentId);
+        studentService.deleteById(studentId);
 
-        return "執行資料庫的Delete操作";
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/students/{studentId}")
-    public Student read(@PathVariable Integer studentId){
+    public ResponseEntity<Student> read(@PathVariable Integer studentId){
 
-//      Optional 用法 orElse 如果資料庫找不到這筆資訊，student的值就會是null
-        Student student = studentRepository.findById(studentId).orElse(null);
+        Student student = studentService.getById(studentId);
 
-        return student;
+        return ResponseEntity.status(HttpStatus.OK).body(student);
     }
 }

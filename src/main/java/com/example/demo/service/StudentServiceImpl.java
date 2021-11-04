@@ -11,8 +11,22 @@ public class StudentServiceImpl implements StudentService{
     private StudentDao studentDao;
 
     @Override
-    public Student getById(Integer studentId) {
+    public Integer insert(Student student) {
+        return studentDao.Insert(student);
+    }
 
+    @Override
+    public Student getById(Integer studentId) {
         return studentDao.getById(studentId);
+    }
+
+    @Override
+    public void update(Student student) {
+        studentDao.update(student);
+    }
+
+    @Override
+    public void deleteById(Integer studentId) {
+        studentDao.deleteById(studentId);
     }
 }
