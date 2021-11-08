@@ -47,12 +47,12 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @DeleteMapping("/students/{studentId")
+    @DeleteMapping("/students/{studentId}")
     public ResponseEntity<?> delete(@PathVariable Integer studentId){
 
         studentService.deleteById(studentId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/students/{studentId}")

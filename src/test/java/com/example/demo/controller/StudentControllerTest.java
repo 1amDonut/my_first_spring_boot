@@ -41,14 +41,25 @@ class StudentControllerTest {
     @Test
     void update() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/student/1");
+                .put("/students/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "    \"name\": \"sisy\",\n" +
+                        "    \"scoure\": 97,\n" +
+                        "    \"graduate\":true\n" +
+                        "}");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(200));
     }
 
     @Test
-    void delete() {
+    void delete() throws Exception{
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/students/1");
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().is(200));
     }
 
     @Test

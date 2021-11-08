@@ -20,14 +20,17 @@ public class StudentDaoImpl implements StudentDao{
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public Student getById(Integer studentId) {
-        String sql = "SELECT id, name FROM student";
+    public Student getById(Integer id) {
+        String sql = "SELECT id, name FROM student WHERE id = :id";
 
         Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
 
         List<Student> list = namedParameterJdbcTemplate.query(sql, map, new StudentRowMapper());
 
-        return list.get(0);
+        if(list.size() > 0) return list.get(0);
+        else return null;
+
     }
 
     @Override
@@ -53,7 +56,7 @@ public class StudentDaoImpl implements StudentDao{
 
     @Override
     public Integer Insert(Student student) {
-        String sql = "INSERT INTO student(name, ) VALUE (:name)";
+        String sql = "INSERT INTO student(name) VALUES (:name)";
 
         Map<String, Object> map = new HashMap<>();
         map.put("name",student.getName());
